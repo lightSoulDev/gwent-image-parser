@@ -1,0 +1,2 @@
+docker build -t gwent-image-parser ./gwent-image-parser --platform linux/x86_64
+docker network create gwent-web

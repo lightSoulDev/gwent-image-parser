@@ -1,0 +1,35 @@
+version: '3.8'
+
+networks:
+    gwent-web:
+      external: true
+      driver:  bridge
+
+services:
+    chrome:
+        image: selenium/standalone-chrome:latest
+        hostname: chrome
+        networks:
+          - gwent-web
+        privileged: true
+        shm_size: 2g
+        platform: linux/x86_64
+    worker:
+        image: gwent-image-parser
+        networks:
+          - gwent-web
+        depends_on: 
+          - chrome
+        platform: linux/x86_64
+        volumes:
+          - gwent-data:/usr/src/app/data
+        environment:
+          - SERVICE_URL=https://gwent.one/en/card/
+          - TARGET=.card-image-wrap
+          - INPUT=./cards_info_en.json
+          - OUTPUT=./data/img
+          - WAIT_LIMIT=90
+          - PAGE_WAIT_TIME=1
+
+volumes:
+  gwent-data:
